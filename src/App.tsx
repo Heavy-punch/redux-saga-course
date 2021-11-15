@@ -1,9 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import logo from './logo.svg';
 import { Counter } from './features/counter/Counter';
 import './App.css';
+import cityApi from 'api/cityApi';
+import studentApi from 'api/studentApi';
+import { ListParams } from 'models';
 
 function App() {
+  useEffect(()=>{
+    const params:ListParams = {
+      _page:1,
+      _limit:10,
+      _sort:"",
+      _order:"asc"
+    }
+    studentApi.getAll(params).then(response=>console.log(response))
+  },[])
   return (
     <div className="App">
       <header className="App-header">
