@@ -1,70 +1,92 @@
-import React, { useEffect } from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
-import cityApi from 'api/cityApi';
 import studentApi from 'api/studentApi';
+import { NotFound, PrivateRoute } from 'components/Common';
+import { AdminLayout } from 'components/Layout';
+import LoginPage from 'features/auth/pages/LoginPage';
 import { ListParams } from 'models';
+import React, { useEffect } from 'react';
+import { Route, Switch } from 'react-router-dom';
+import './App.css';
 
 function App() {
-  useEffect(()=>{
-    const params:ListParams = {
-      _page:1,
-      _limit:10,
-      _sort:"",
-      _order:"asc"
-    }
-    studentApi.getAll(params).then(response=>console.log(response))
-  },[])
+  useEffect(() => {
+    const params: ListParams = {
+      _page: 1,
+      _limit: 10,
+      _sort: '',
+      _order: 'asc',
+    };
+    studentApi.getAll(params).then((response) => console.log(response));
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
+    <Switch>
+      <Route path="/login">
+        <LoginPage />
+      </Route>
+      <PrivateRoute path="/admin">
+        <AdminLayout />
+      </PrivateRoute>
+      <Route>
+        <NotFound />
+      </Route>
+    </Switch>
+    // <Routes>
+    //   <Route path="login" element={<LoginPage />}></Route>
+    //   <Route path="admin" element={<PrivateRoute />}>
+    //     <Route path="" element={<AdminLayout />} />
+    //     <Route path="student" element={<Student />} />
+    //   </Route>
+    //   <Route path="*" element={<NotFound />} />
+    // </Routes>
   );
 }
 
 export default App;
+
+/*
+function RequireAuth({ children }: { children: JSX.Element }) {
+  let auth = useAuth();
+  let location = useLocation();
+
+  if (!auth.user) {
+    // Redirect them to the /login page, but save the current location they were
+    // trying to go to when they were redirected. This allows us to send them
+    // along to that page after they login, which is a nicer user experience
+    // than dropping them off on the home page.
+    return <Navigate to="/login" state={{ from: location }} />;
+  }
+
+  return children;
+}
+
+...
+
+<Route
+  path="/protected"
+  element={
+    <RequireAuth>
+      <ProtectedPage />
+    </RequireAuth>
+  }
+/>
+
+
+
+
+OR****
+import { Navigate, useLocation } from "react-router";
+
+export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) => {
+  let auth = useAuth();
+  let location = useLocation();
+
+  if (!auth.user) {
+    return <Navigate to="/login" state={{ from: location }} />;
+  }
+
+  return children;
+};
+
+
+<Route path="/protected" element={<RequireAuth><ProtectedPage /></RequireAuth>} />
+
+*/
